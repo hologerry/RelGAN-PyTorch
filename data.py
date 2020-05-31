@@ -1,5 +1,5 @@
 # Copyright (C) 2019 Willy Po-Wei Wu & Elvis Yu-Jing Lin <maya6282@gmail.com, elvisyjlin@gmail.com>
-# 
+#
 # This work is licensed under the Creative Commons Attribution-NonCommercial
 # 4.0 International License. To view a copy of this license, visit
 # http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
@@ -14,7 +14,7 @@ from os.path import join
 
 
 class CelebA(object):
-    def __init__(self, path, image_size, selected_attrs=None, 
+    def __init__(self, path, image_size, selected_attrs=None,
                  filter_attrs={}, mode='train', test_num=2000):
         assert mode in ['train', 'val'], 'Unsupported mode: {}'.format(mode)
         self.path = path
@@ -25,19 +25,19 @@ class CelebA(object):
         self.filter(filter_attrs)
         if mode == 'train':
             self.tf = transforms.Compose([
-                transforms.ToPILImage(), 
-                transforms.Resize(image_size), 
-                transforms.CenterCrop(image_size), 
-                transforms.RandomHorizontalFlip(p=0.5), 
-                transforms.ToTensor(), 
+                transforms.ToPILImage(),
+                transforms.Resize(image_size),
+                transforms.CenterCrop(image_size),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         if mode == 'val':
             self.tf = transforms.Compose([
-                transforms.ToPILImage(), 
-                transforms.Resize(image_size), 
-                transforms.CenterCrop(image_size), 
-                transforms.ToTensor(), 
+                transforms.ToPILImage(),
+                transforms.Resize(image_size),
+                transforms.CenterCrop(image_size),
+                transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         print('Splitting image list...')
@@ -49,12 +49,15 @@ class CelebA(object):
                 print('Picking testing images')
                 self.image_list = self.image_list[:test_num]
         print('CelebA dataset loaded.')
+
     def get(self, index):
         img = io.imread(join(self.path, 'celeba', self.image_list[index]))
         att = self.annotations[self.image_list[index]]
         return self.tf(img), torch.tensor(att)
+
     def __len__(self):
         return len(self.image_list)
+
     def filter(self, attributes):
         to_remove = []
         for img_idx, img in enumerate(self.image_list):
@@ -67,8 +70,9 @@ class CelebA(object):
             del self.image_list[img_idx]
             del self.annotations[img_idx]
 
+
 class CelebAHQ(object):
-    def __init__(self, path, image_size, selected_attrs=None, 
+    def __init__(self, path, image_size, selected_attrs=None,
                  filter_attrs={}, mode='train', test_num=2000):
         assert mode in ['train', 'val'], 'Unsupported mode: {}'.format(mode)
         self.path = path
@@ -80,40 +84,43 @@ class CelebAHQ(object):
         self.filter(filter_attrs)
         if mode == 'train':
             self.tf = transforms.Compose([
-                transforms.ToPILImage(), 
-                transforms.Resize(image_size), 
-                transforms.CenterCrop(image_size), 
-                transforms.RandomHorizontalFlip(p=0.5), 
-                transforms.ToTensor(), 
+                transforms.ToPILImage(),
+                transforms.Resize(image_size),
+                transforms.CenterCrop(image_size),
+                transforms.RandomHorizontalFlip(p=0.5),
+                transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         if mode == 'val':
             self.tf = transforms.Compose([
-                transforms.ToPILImage(), 
-                transforms.Resize(image_size), 
-                transforms.CenterCrop(image_size), 
-                transforms.ToTensor(), 
+                transforms.ToPILImage(),
+                transforms.Resize(image_size),
+                transforms.CenterCrop(image_size),
+                transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         print('Splitting image list...')
         if test_num > -1:
             if mode == 'train':
                 print('Picking training images')
-                #self.image_list = self.image_list[test_num:]
-                #self.length = self.length - test_num
-                
+                # self.image_list = self.image_list[test_num:]
+                # self.length = self.length - test_num
+
                 # Pick all images as training set
                 self.image_list = self.image_list
             if mode == 'val':
                 print('Picking testing images')
                 self.image_list = self.image_list[:test_num]
         print('CelebA-HQ dataset loaded.')
+
     def get(self, index):
         img = io.imread(join(self.path, 'celeba-hq/celeba-{:d}'.format(self.image_size), '{:d}.jpg'.format(index)))
         att = self.annotations[self.image_list[index]]
         return self.tf(img), torch.tensor(att)
+
     def __len__(self):
         return len(self.image_list)
+
     def filter(self, attributes):
         to_remove = []
         for img_idx, img in enumerate(self.image_list):
@@ -126,12 +133,14 @@ class CelebAHQ(object):
             del self.image_list[img_idx]
             del self.annotations[img_idx]
 
+
 class PairedData(object):
-    def __init__(self, dataset, batch_size):
+    def __init__(self, dataset, batch_size, mode):
         self.dataset = dataset
         self.batch_size = batch_size
         self.shuffle = mode == 'train'
         self.i = 0
+
     def next(self, gpu=False, multi_gpu=False):
         if self.shuffle:
             idxs = np.random.choice(len(self.dataset), self.batch_size)
@@ -140,7 +149,7 @@ class PairedData(object):
             self.i = self.i + self.batch_size
             if self.i + self.batch_size >= len(self):
                 self.i = 0
-        
+
         imgs = [None] * self.batch_size
         atts = [None] * self.batch_size
         for i in range(len(idxs)):
@@ -150,11 +159,15 @@ class PairedData(object):
         imgs = torch.stack(imgs)
         atts = torch.stack(atts)
         if gpu:
-            imgs = imgs.cuda(async=multi_gpu)
-            atts = atts.cuda(async=multi_gpu)
+            # imgs = imgs.cuda(async=multi_gpu)
+            # atts = atts.cuda(async=multi_gpu)
+            imgs = imgs.cuda()
+            atts = atts.cuda()
         return imgs, atts
+
     def __len__(self):
         return len(self.dataset)
+
 
 def load_annotations(file, selected_attrs=None):
     lines = open(file).readlines()
@@ -163,8 +176,9 @@ def load_annotations(file, selected_attrs=None):
     Attribute names
     000001.jpg -1  1  1 -1 -1 -1 -1 -1 -1 -1 -1  1 -1 -1 -1 -1 -1 -1  1  1 -1  1 -1 -1  1 -1 -1  1 -1 -1 -1  1  1 -1  1 -1  1 -1 -1  1
     ...
-    
-    selected_attrs = ['5_o_Clock_Shadow', 'Bald', 'Bangs', 'Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Eyeglasses', 'Goatee', 'Gray_Hair', 'Male', 'Mustache', 'Pale_Skin', 'Smiling', 'Straight_Hair', 'Wavy_Hair', 'Wearing_Hat', 'Young']
+
+    selected_attrs = ['5_o_Clock_Shadow', 'Bald', 'Bangs', 'Black_Hair', 'Blond_Hair', 'Brown_Hair', 'Eyeglasses', 'Goatee', 'Gray_Hair',
+    'Male', 'Mustache', 'Pale_Skin', 'Smiling', 'Straight_Hair', 'Wavy_Hair', 'Wearing_Hat', 'Young']
     '''
     attrs = lines[1].split()
     if selected_attrs is None:
@@ -179,6 +193,7 @@ def load_annotations(file, selected_attrs=None):
         anno = [anno[idx] for idx in selected_attrs_idx]
         annotations[file] = anno
     return annotations, selected_attrs
+
 
 def load_image_list(file):
     lines = open(file).readlines()[1:]

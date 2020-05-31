@@ -1,5 +1,5 @@
 # Copyright (C) 2019 Willy Po-Wei Wu & Elvis Yu-Jing Lin <maya6282@gmail.com, elvisyjlin@gmail.com>
-# 
+#
 # This work is licensed under the Creative Commons Attribution-NonCommercial
 # 4.0 International License. To view a copy of this license, visit
 # http://creativecommons.org/licenses/by-nc/4.0/ or send a letter to
@@ -8,10 +8,11 @@
 
 def run_from_ipython():
     try:
-        __IPYTHON__
+        __IPYTHON__  # noqa
         return True
     except NameError:
         return False
+
 
 def add_scalar_dict(writer, scalar_dict, iteration, directory=None):
     for key in scalar_dict:
