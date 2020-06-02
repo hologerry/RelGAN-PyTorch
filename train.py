@@ -116,17 +116,17 @@ assert type(selected_attributes) is list
 os.makedirs('model', exist_ok=True)
 
 
-# interpolating_attributes = ['Smiling', 'Young', 'Mustache']
-interpolating_attributes = ['Young']
-# test_attributes = [
-#     ('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),
-#     ('Male', 1), ('Male', -1), ('Mustache', 1), ('Pale_Skin', 1),
-#     ('Smiling', 1), ('Bald', 1), ('Eyeglasses', 1), ('Young', 1), ('Young', -1)
-# ]
+interpolating_attributes = ['Smiling', 'Young', 'Mustache']
+# interpolating_attributes = ['Young']
 test_attributes = [
     ('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),
-    ('Male', 1), ('Young', 1), ('Young', -1)
+    ('Male', 1), ('Male', -1), ('Mustache', 1), ('Pale_Skin', 1),
+    ('Smiling', 1), ('Bald', 1), ('Eyeglasses', 1), ('Young', 1), ('Young', -1)
 ]
+# test_attributes = [
+#     ('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),
+#     ('Male', 1), ('Young', 1), ('Young', -1)
+# ]
 inter_annos = np.zeros(
     (10 * len(interpolating_attributes), len(selected_attributes)),
     dtype=np.float32
