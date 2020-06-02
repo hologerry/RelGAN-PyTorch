@@ -156,29 +156,29 @@ tf = transforms.Compose([
 if dataset == 'celeba':
     from data import CelebA, PairedData
     train_dataset = CelebA(
-        data_path, image_size, selected_attr=selected_attributes, mode='train',
+        data_path, image_size, selected_attrs=selected_attributes, mode='train',
     )
     train_dataloader = PairedData(train_dataset, batch_size)
     valid_dataset = CelebA(
-        data_path, image_size, selected_attr=selected_attributes, mode='val',
+        data_path, image_size, selected_attrs=selected_attributes, mode='val',
     )
     valid_dataloader = PairedData(valid_dataset, batch_size)
     test_dataset = CelebA(
-        data_path, image_size, selected_attr=selected_attributes, mode='test',
+        data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
     test_dataloader = PairedData(test_dataset, batch_size)
 if dataset == 'celeba-hq':
     from data import CelebAHQ, PairedData
     train_dataset = CelebAHQ(
-        data_path, image_size, selected_attr=selected_attributes, mode='train',
+        data_path, image_size, selected_attrs=selected_attributes, mode='train',
     )
     train_dataloader = PairedData(train_dataset, batch_size)
     valid_dataset = CelebAHQ(
-        data_path, image_size, selected_attr=selected_attributes, mode='val',
+        data_path, image_size, selected_attrs=selected_attributes, mode='val',
     )
     valid_dataloader = PairedData(valid_dataset, batch_size)
     test_dataset = CelebAHQ(
-        data_path, image_size, selected_attr=selected_attributes, mode='test',
+        data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
     test_dataloader = PairedData(test_dataset, batch_size)
 
