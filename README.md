@@ -44,4 +44,4 @@ CUDA_VISIBLE_DEVICES=0 python3 train.py --config config.yaml
 
 # Experiments log
 ## Original RelGAN
-commit: orgin relgan
+commit: origin relgan
