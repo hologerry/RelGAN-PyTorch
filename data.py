@@ -57,7 +57,7 @@ class CelebA(object):
         print('CelebA dataset loaded.')
 
     def get(self, index):
-        img = io.imread(join(self.path, 'celeba', self.image_list[index]))
+        img = io.imread(join(self.path, 'celeba', 'img_align_celeba', self.image_list[index]))
         att = self.annotations[self.image_list[index]]
         if self.mode == 'test':
             return self.tf(img)
