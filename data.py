@@ -15,13 +15,15 @@ from os.path import join
 
 class CelebA(object):
     def __init__(self, path, image_size, selected_attrs=None,
-                 filter_attrs={}, mode='train', test_num=2000):
-        assert mode in ['train', 'val'], 'Unsupported mode: {}'.format(mode)
+                 filter_attrs={}, mode='train', val_num=2000, test_num=200):
+        assert mode in ['train', 'val', 'test'], 'Unsupported mode: {}'.format(mode)
         self.path = path
         print('Loading annotations...')
         self.annotations, self.selected_attrs = load_annotations(join(path, 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
         self.image_list = list(sorted(self.annotations.keys()))
+        all_img_num = len(self.image_list)
+        train_num = all_img_num - val_num - test_num
         self.filter(filter_attrs)
         if mode == 'train':
             self.tf = transforms.Compose([
@@ -32,7 +34,7 @@ class CelebA(object):
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
-        if mode == 'val':
+        elif mode == 'val' or mode == 'test':
             self.tf = transforms.Compose([
                 transforms.ToPILImage(),
                 transforms.Resize(image_size),
@@ -41,18 +43,24 @@ class CelebA(object):
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         print('Splitting image list...')
-        if test_num > -1:
+        if train_num < all_img_num:
             if mode == 'train':
                 print('Picking training images')
-                self.image_list = self.image_list[test_num:]
-            if mode == 'val':
+                self.image_list = self.image_list[:train_num]
+            elif mode == 'val':
+                print('Picking validating images')
+                self.image_list = self.image_list[train_num:train_num+val_num]
+            elif mode == 'test':
                 print('Picking testing images')
-                self.image_list = self.image_list[:test_num]
+                self.image_list = self.image_list[train_num+val_num:]
+
         print('CelebA dataset loaded.')
 
     def get(self, index):
         img = io.imread(join(self.path, 'celeba', self.image_list[index]))
         att = self.annotations[self.image_list[index]]
+        if self.mode == 'test':
+            return self.tf(img)
         return self.tf(img), torch.tensor(att)
 
     def __len__(self):
@@ -73,7 +81,7 @@ class CelebA(object):
 
 class CelebAHQ(object):
     def __init__(self, path, image_size, selected_attrs=None,
-                 filter_attrs={}, mode='train', test_num=2000):
+                 filter_attrs={}, mode='train', val_num=2000, test_num=200):
         assert mode in ['train', 'val'], 'Unsupported mode: {}'.format(mode)
         self.path = path
         self.image_size = image_size
@@ -81,6 +89,8 @@ class CelebAHQ(object):
         self.annotations, self.selected_attrs = load_annotations(join(path, 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
         self.image_list = load_image_list(join(path, 'image_list.txt'))
+        all_img_num = len(self.image_list)
+        train_num = all_img_num - val_num - test_num
         self.filter(filter_attrs)
         if mode == 'train':
             self.tf = transforms.Compose([
@@ -91,7 +101,7 @@ class CelebAHQ(object):
                 transforms.ToTensor(),
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
-        if mode == 'val':
+        elif mode == 'val' or mode == 'test':
             self.tf = transforms.Compose([
                 transforms.ToPILImage(),
                 transforms.Resize(image_size),
@@ -100,22 +110,27 @@ class CelebAHQ(object):
                 transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
             ])
         print('Splitting image list...')
-        if test_num > -1:
+        if val_num > -1:
             if mode == 'train':
                 print('Picking training images')
-                # self.image_list = self.image_list[test_num:]
-                # self.length = self.length - test_num
+                self.image_list = self.image_list[:train_num]
 
                 # Pick all images as training set
-                self.image_list = self.image_list
-            if mode == 'val':
+                # self.image_list = self.image_list
+            elif mode == 'val':
+                print('Picking validating images')
+                self.image_list = self.image_list[train_num:train_num+val_num]
+            elif mode == 'test':
                 print('Picking testing images')
-                self.image_list = self.image_list[:test_num]
+                self.image_list = self.image_list[train_num+val_num:]
+
         print('CelebA-HQ dataset loaded.')
 
     def get(self, index):
         img = io.imread(join(self.path, 'celeba-hq/celeba-{:d}'.format(self.image_size), '{:d}.jpg'.format(index)))
         att = self.annotations[self.image_list[index]]
+        if self.mode == 'test':
+            return self.tf(img)
         return self.tf(img), torch.tensor(att)
 
     def __len__(self):

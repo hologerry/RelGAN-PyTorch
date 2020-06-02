@@ -18,8 +18,8 @@ import yaml
 
 import torch
 # import torch.nn as nn
-import torch.utils.data as data
-import torchvision.datasets as datasets
+# import torch.utils.data as data
+# import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from torchvision.utils import make_grid
 from tensorboardX import SummaryWriter
@@ -148,42 +148,53 @@ tf = transforms.Compose([
     transforms.ToTensor(),
     transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
 ])
-test_dataset = datasets.ImageFolder(root='test_imgs', transform=tf)
-test_dataloader = data.DataLoader(test_dataset, batch_size=batch_size)
 
+# test_dataset = datasets.ImageFolder(root='test_imgs', transform=tf)
+# test_dataloader = data.DataLoader(test_dataset, batch_size=batch_size)
+# Get test split from all celeba the last 200, instead of preparing it by ourselves
 
 if dataset == 'celeba':
     from data import CelebA, PairedData
-    train_dset = CelebA(
-        data_path, image_size, selected_attr=selected_attributes, mode='train', test_num=2000
+    train_dataset = CelebA(
+        data_path, image_size, selected_attr=selected_attributes, mode='train',
     )
-    train_data = PairedData(train_dset, batch_size)
-    valid_dset = CelebA(
-        data_path, image_size, selected_attr=selected_attributes, mode='val', test_num=2000
+    train_dataloader = PairedData(train_dataset, batch_size)
+    valid_dataset = CelebA(
+        data_path, image_size, selected_attr=selected_attributes, mode='val',
     )
-    valid_data = PairedData(valid_dset, batch_size)
+    valid_dataloader = PairedData(valid_dataset, batch_size)
+    test_dataset = CelebA(
+        data_path, image_size, selected_attr=selected_attributes, mode='test',
+    )
+    test_dataloader = PairedData(test_dataset, batch_size)
 if dataset == 'celeba-hq':
     from data import CelebAHQ, PairedData
-    train_dset = CelebAHQ(
-        data_path, image_size, selected_attr=selected_attributes, mode='train', test_num=2000
+    train_dataset = CelebAHQ(
+        data_path, image_size, selected_attr=selected_attributes, mode='train',
     )
-    train_data = PairedData(train_dset, batch_size)
-    valid_dset = CelebAHQ(
-        data_path, image_size, selected_attr=selected_attributes, mode='val', test_num=2000
+    train_dataloader = PairedData(train_dataset, batch_size)
+    valid_dataset = CelebAHQ(
+        data_path, image_size, selected_attr=selected_attributes, mode='val',
     )
-    valid_data = PairedData(valid_dset, batch_size)
-if dataset == 'wikiart-genre+style':
-    from data import WikiArtMulti, PairedData
-    train_dset = WikiArtMulti(
-        data_path, ['genre', 'style'], image_size, mode='train'
+    valid_dataloader = PairedData(valid_dataset, batch_size)
+    test_dataset = CelebAHQ(
+        data_path, image_size, selected_attr=selected_attributes, mode='test',
     )
-    train_data = PairedData(train_dset, batch_size)
-    valid_dset = WikiArtMulti(
-        data_path, ['genre', 'style'], image_size, mode='train'
-    )
-    valid_data = PairedData(valid_dset, batch_size)
+    test_dataloader = PairedData(test_dataset, batch_size)
 
-print('# of Total Images:', len(train_data), '( Training:', len(train_data), '/ Validating:', len(valid_data), ')')
+if dataset == 'wikiart-genre+style':
+    raise NotImplementedError
+    from data import WikiArtMulti, PairedData
+    train_dataset = WikiArtMulti(
+        data_path, ['genre', 'style'], image_size, mode='train'
+    )
+    train_dataloader = PairedData(train_dataset, batch_size)
+    valid_dataset = WikiArtMulti(
+        data_path, ['genre', 'style'], image_size, mode='train'
+    )
+    valid_dataloader = PairedData(valid_dataset, batch_size)
+
+print('# of Total Images:', len(train_dataloader), '( Training:', len(train_dataloader), '/ Validating:', len(valid_dataloader), ')')
 gan = GAN(args)
 writer = SummaryWriter() if exp_name is None else SummaryWriter('run/' + exp_name)
 writer.add_text('config', str(args))
@@ -195,17 +206,17 @@ writer.add_text('D_critic', d_critic.replace('\n', '  \n'))
 if load_file is not None:
     gan.load(load_file)
 
-fixed_img_a, fixed_att_a = valid_data.next(gpu, multi_gpu)
-fixed_img_b, fixed_att_b = valid_data.next(gpu, multi_gpu)
+fixed_img_a, fixed_att_a = valid_dataloader.next(gpu, multi_gpu)
+fixed_img_b, fixed_att_b = valid_dataloader.next(gpu, multi_gpu)
 writer.add_image('valid_img_a', make_grid(inv_normalize(fixed_img_a), nrow=8))
 writer.add_image('valid_img_b', make_grid(inv_normalize(fixed_img_b), nrow=8))
 
 for ite in range(start_step, start_step + n_steps):
     gan.train()
     t_start = time.time()
-    img_a, att_a = train_data.next(gpu, multi_gpu)
-    img_b, att_b = train_data.next(gpu, multi_gpu)
-    img_c, att_c = train_data.next(gpu, multi_gpu)
+    img_a, att_a = train_dataloader.next(gpu, multi_gpu)
+    img_b, att_b = train_dataloader.next(gpu, multi_gpu)
+    img_c, att_c = train_dataloader.next(gpu, multi_gpu)
     vec_ab = att_a - att_b
     vec_ac = att_a - att_c
     vec_cb = att_c - att_b
@@ -246,7 +257,8 @@ for ite in range(start_step, start_step + n_steps):
         writer.add_image('valid_img_inter', make_grid(inv_normalize(f), nrow=len(inter_annos)+1), ite+1)
         f = []
         g = []
-        for x, y in test_dataloader:
+        for x in test_dataloader:
+            # testloader yeild image only
             x = x.cuda() if gpu else x
             x0 = x.detach().unsqueeze(1).cpu()
             f.append(x0)
