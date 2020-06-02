@@ -21,6 +21,7 @@ class CelebA(object):
         print('Loading annotations...')
         self.annotations, self.selected_attrs = load_annotations(join(path, 'celeba', 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
+        self.mode = mode
         self.image_list = list(sorted(self.annotations.keys()))
         all_img_num = len(self.image_list)
         train_num = all_img_num - val_num - test_num
