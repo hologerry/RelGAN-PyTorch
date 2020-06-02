@@ -21,7 +21,6 @@ class CelebA(object):
         print('Loading annotations...')
         self.annotations, self.selected_attrs = load_annotations(join(path, 'celeba', 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
-        self.mode = mode
         self.image_list = list(sorted(self.annotations.keys()))
         all_img_num = len(self.image_list)
         train_num = all_img_num - val_num - test_num
@@ -60,8 +59,6 @@ class CelebA(object):
     def get(self, index):
         img = io.imread(join(self.path, 'celeba', 'img_align_celeba', self.image_list[index]))
         att = self.annotations[self.image_list[index]]
-        if self.mode == 'test':
-            return self.tf(img)
         return self.tf(img), torch.tensor(att)
 
     def __len__(self):
@@ -130,8 +127,6 @@ class CelebAHQ(object):
     def get(self, index):
         img = io.imread(join(self.path, 'celeba-hq/celeba-{:d}'.format(self.image_size), '{:d}.jpg'.format(index)))
         att = self.annotations[self.image_list[index]]
-        if self.mode == 'test':
-            return self.tf(img)
         return self.tf(img), torch.tensor(att)
 
     def __len__(self):

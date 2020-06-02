@@ -258,7 +258,7 @@ for ite in range(start_step, start_step + n_steps):
         writer.add_image('valid_img_inter', make_grid(inv_normalize(f), nrow=len(inter_annos)+1), ite+1)
         f = []
         g = []
-        for x in test_dataloader:
+        for x, _ in test_dataloader:
             # testloader yeild image only
             x = x.cuda() if gpu else x
             x0 = x.detach().unsqueeze(1).cpu()
