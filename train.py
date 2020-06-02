@@ -18,7 +18,7 @@ import yaml
 
 import torch
 # import torch.nn as nn
-# import torch.utils.data as data
+import torch.utils.data as data
 # import torchvision.datasets as datasets
 import torchvision.transforms as transforms
 from torchvision.utils import make_grid
@@ -166,7 +166,7 @@ if dataset == 'celeba':
     test_dataset = CelebA(
         data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
-    test_dataloader = PairedData(test_dataset, batch_size, 'test')
+    test_dataloader = data.DataLoader(test_dataset, batch_size)
 if dataset == 'celeba-hq':
     from data import CelebAHQ, PairedData
     train_dataset = CelebAHQ(
@@ -180,7 +180,7 @@ if dataset == 'celeba-hq':
     test_dataset = CelebAHQ(
         data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
-    test_dataloader = PairedData(test_dataset, batch_size, 'test')
+    test_dataloader = data.DataLoader(test_dataset, batch_size)
 
 if dataset == 'wikiart-genre+style':
     raise NotImplementedError

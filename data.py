@@ -9,11 +9,12 @@
 import numpy as np
 import skimage.io as io
 import torch
+import torch.utils.data as data
 import torchvision.transforms as transforms
 from os.path import join
 
 
-class CelebA(object):
+class CelebA(data.Dataset):
     def __init__(self, path, image_size, selected_attrs=None,
                  filter_attrs={}, mode='train', val_num=2000, test_num=200):
         assert mode in ['train', 'val', 'test'], 'Unsupported mode: {}'.format(mode)
@@ -61,6 +62,9 @@ class CelebA(object):
         att = self.annotations[self.image_list[index]]
         return self.tf(img), torch.tensor(att)
 
+    def __getitem__(self, index):
+        return self.get(index)
+
     def __len__(self):
         return len(self.image_list)
 
@@ -77,7 +81,7 @@ class CelebA(object):
             del self.annotations[img_idx]
 
 
-class CelebAHQ(object):
+class CelebAHQ(data.Dataset):
     def __init__(self, path, image_size, selected_attrs=None,
                  filter_attrs={}, mode='train', val_num=2000, test_num=200):
         assert mode in ['train', 'val', 'test'], 'Unsupported mode: {}'.format(mode)
@@ -128,6 +132,9 @@ class CelebAHQ(object):
         img = io.imread(join(self.path, 'celeba-hq/celeba-{:d}'.format(self.image_size), '{:d}.jpg'.format(index)))
         att = self.annotations[self.image_list[index]]
         return self.tf(img), torch.tensor(att)
+
+    def __getitem__(self, index):
+        return self.get(index)
 
     def __len__(self):
         return len(self.image_list)
