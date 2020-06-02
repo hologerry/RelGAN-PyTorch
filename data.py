@@ -19,7 +19,7 @@ class CelebA(object):
         assert mode in ['train', 'val', 'test'], 'Unsupported mode: {}'.format(mode)
         self.path = path
         print('Loading annotations...')
-        self.annotations, self.selected_attrs = load_annotations(join(path, 'list_attr_celeba.txt'), selected_attrs)
+        self.annotations, self.selected_attrs = load_annotations(join(path, 'celeba', 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
         self.image_list = list(sorted(self.annotations.keys()))
         all_img_num = len(self.image_list)
@@ -82,11 +82,11 @@ class CelebA(object):
 class CelebAHQ(object):
     def __init__(self, path, image_size, selected_attrs=None,
                  filter_attrs={}, mode='train', val_num=2000, test_num=200):
-        assert mode in ['train', 'val'], 'Unsupported mode: {}'.format(mode)
+        assert mode in ['train', 'val', 'test'], 'Unsupported mode: {}'.format(mode)
         self.path = path
         self.image_size = image_size
         print('Loading annotations...')
-        self.annotations, self.selected_attrs = load_annotations(join(path, 'list_attr_celeba.txt'), selected_attrs)
+        self.annotations, self.selected_attrs = load_annotations(join(path, 'celeba-hq', 'list_attr_celeba.txt'), selected_attrs)
         print('Loading image list...')
         self.image_list = load_image_list(join(path, 'image_list.txt'))
         all_img_num = len(self.image_list)
