@@ -158,29 +158,29 @@ if dataset == 'celeba':
     train_dataset = CelebA(
         data_path, image_size, selected_attrs=selected_attributes, mode='train',
     )
-    train_dataloader = PairedData(train_dataset, batch_size)
+    train_dataloader = PairedData(train_dataset, batch_size, 'train')
     valid_dataset = CelebA(
         data_path, image_size, selected_attrs=selected_attributes, mode='val',
     )
-    valid_dataloader = PairedData(valid_dataset, batch_size)
+    valid_dataloader = PairedData(valid_dataset, batch_size, 'val')
     test_dataset = CelebA(
         data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
-    test_dataloader = PairedData(test_dataset, batch_size)
+    test_dataloader = PairedData(test_dataset, batch_size, 'test')
 if dataset == 'celeba-hq':
     from data import CelebAHQ, PairedData
     train_dataset = CelebAHQ(
         data_path, image_size, selected_attrs=selected_attributes, mode='train',
     )
-    train_dataloader = PairedData(train_dataset, batch_size)
+    train_dataloader = PairedData(train_dataset, batch_size, 'train')
     valid_dataset = CelebAHQ(
         data_path, image_size, selected_attrs=selected_attributes, mode='val',
     )
-    valid_dataloader = PairedData(valid_dataset, batch_size)
+    valid_dataloader = PairedData(valid_dataset, batch_size, 'val')
     test_dataset = CelebAHQ(
         data_path, image_size, selected_attrs=selected_attributes, mode='test',
     )
-    test_dataloader = PairedData(test_dataset, batch_size)
+    test_dataloader = PairedData(test_dataset, batch_size, 'test')
 
 if dataset == 'wikiart-genre+style':
     raise NotImplementedError
@@ -188,11 +188,11 @@ if dataset == 'wikiart-genre+style':
     train_dataset = WikiArtMulti(
         data_path, ['genre', 'style'], image_size, mode='train'
     )
-    train_dataloader = PairedData(train_dataset, batch_size)
+    train_dataloader = PairedData(train_dataset, batch_size, 'train')
     valid_dataset = WikiArtMulti(
-        data_path, ['genre', 'style'], image_size, mode='train'
+        data_path, ['genre', 'style'], image_size, mode='val'
     )
-    valid_dataloader = PairedData(valid_dataset, batch_size)
+    valid_dataloader = PairedData(valid_dataset, batch_size, 'val')
 
 print('# of Total Images:', len(train_dataloader), '( Training:', len(train_dataloader), '/ Validating:', len(valid_dataloader), ')')
 gan = GAN(args)

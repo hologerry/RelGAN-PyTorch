@@ -39,3 +39,8 @@ CUDA_VISIBLE_DEVICES=0,1,2,3 python3 train.py --data <PATH_TO_CELEBA-HQ> --multi
 ```bash
 CUDA_VISIBLE_DEVICES=0 python3 train.py --config config.yaml
 ```
+
+
+
+# Experiments log
+## Original RelGAN

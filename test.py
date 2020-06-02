@@ -78,7 +78,7 @@ def load_config(config_file):
 
 if run_from_ipython():
     args = load_config('config.yaml')
-    get_ipython().run_line_magic('env', 'CUDA_VISIBLE_DEVICES=0')
+    get_ipython().run_line_magic('env', 'CUDA_VISIBLE_DEVICES=0')  # noqa
     args.data = '/share/data'
 else:
     args = parse()
@@ -200,9 +200,9 @@ for anno in inter_annos:
     with torch.no_grad():
         img_inter = gan.G(fixed_img_a, vec_inter).detach()
     f = torch.cat([f, img_inter.unsqueeze(1).cpu()], dim=1)
-save_image(make_grid(inv_normalize(f[0,0]), nrow=1), 'test_result/f00.jpg')
-save_image(make_grid(inv_normalize(f[0,1]), nrow=1), 'test_result/f01.jpg')
-save_image(make_grid(inv_normalize(f[0,10]), nrow=1), 'test_result/f010.jpg')
+save_image(make_grid(inv_normalize(f[0, 0]), nrow=1), 'test_result/f00.jpg')
+save_image(make_grid(inv_normalize(f[0, 1]), nrow=1), 'test_result/f01.jpg')
+save_image(make_grid(inv_normalize(f[0, 10]), nrow=1), 'test_result/f010.jpg')
 f = f.view(f.size(0)*f.size(1), f.size(2), f.size(3), f.size(4))
 save_image(make_grid(inv_normalize(f), nrow=len(inter_annos)+1), 'test_result/valid_img_inter.jpg')
 
