@@ -102,7 +102,7 @@ sample_interval = args.sample_interval
 save_interval = args.save_interval
 
 if not os.path.exists(save_file):
-    os.path.makedirs(save_file)
+    os.makedirs(save_file)
 
 gpu = args.gpu = args.gpu or args.multi_gpu
 multi_gpu = args.multi_gpu
