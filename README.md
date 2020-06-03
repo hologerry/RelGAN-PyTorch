@@ -43,5 +43,37 @@ CUDA_VISIBLE_DEVICES=0 python3 train.py --config config.yaml
 
 
 # Experiments log
+
+
 ## Original RelGAN
-commit: origin relgan
+commit: 1b4b877
+
+### Problems
+(iterations: 26000)
+0. val_img_xxx: validation results
+    revealed problems:
+    a. reconstruction is good but not attribute transferring
+    b. interpolation is basicly not working
+
+1. test_img: testing the attribute modification
+    tested attributes
+    ```python
+    test_attributes = [
+        ('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),
+        ('Male', 1), ('Male', -1), ('Mustache', 1), ('Pale_Skin', 1),
+        ('Smiling', 1), ('Bald', 1), ('Eyeglasses', 1), ('Young', 1), ('Young', -1)
+    ]
+    ```
+    problems revealed by results:
+    a. artifacts
+    b. hair color cannot be changed, or wrong
+    c. the last few attributes cannot even be changed at all
+
+2. test_img_iter: testing the interpolation
+    tested attributes
+    ```python
+    ['Smiling', 'Young', 'Mustache']
+    ```
+    problems revealed by results:
+    a. 'Smiling', most images dont work, only a few ones work, some are mutations
+    b. 'Young' and 'Mustache', basicly not working

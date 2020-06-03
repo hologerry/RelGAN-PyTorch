@@ -197,7 +197,7 @@ if dataset == 'wikiart-genre+style':
 print('# of Total Images:', len(train_dataloader)+len(valid_dataloader)+len(test_dataloader), '( Training:', len(train_dataloader),
       '/ Validating:', len(valid_dataloader), '/ Testing:', len(test_dataloader), ')')
 gan = GAN(args)
-writer = SummaryWriter() if exp_name is None else SummaryWriter('run/' + exp_name)
+writer = SummaryWriter() if exp_name is None else SummaryWriter('runs/' + exp_name)
 writer.add_text('config', str(args))
 g, d, d_critic = gan.summary()
 writer.add_text('G', g.replace('\n', '  \n'))
