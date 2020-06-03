@@ -77,3 +77,8 @@ commit: 1b4b877
     problems revealed by results:
     a. 'Smiling', most images dont work, only a few ones work, some are mutations
     b. 'Young' and 'Mustache', basicly not working
+
+
+
+## Cat attribtue z to resblock and upsample layers
+commit: 56ba589
