@@ -197,8 +197,8 @@ if dataset == 'wikiart-genre+style':
     )
     valid_dataloader = PairedData(valid_dataset, batch_size, 'val')
 
-print('# of Total Images:', len(train_dataloader)+len(valid_dataloader)+len(test_dataloader), '( Training:', len(train_dataloader),
-      '/ Validating:', len(valid_dataloader), '/ Testing:', len(test_dataloader), ')')
+print('# of Total Images:', len(train_dataloader)+len(valid_dataloader)+len(test_dataloader)*batch_size, '( Training:', len(train_dataloader),
+      '/ Validating:', len(valid_dataloader), '/ Testing:', len(test_dataloader)*batch_size, ')')
 gan = GAN(args)
 writer = SummaryWriter() if exp_name is None else SummaryWriter('runs/' + exp_name)
 writer.add_text('config', str(args))
