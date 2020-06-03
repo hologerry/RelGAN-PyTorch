@@ -21,7 +21,7 @@ load: null
 log_interval: 100
 lr: 5.0e-05
 multi_gpu: true
-name: cat_attribute_to_res_up
+name: cat_attribute_to_res_up__reduce_D_one_layer_IN
 orthogonal_regularize: true
 repeat_G: 6
 sample_interval: 1000

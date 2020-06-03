@@ -354,13 +354,14 @@ class G(nn.Module):
 
 
 class D(nn.Module):
-    def __init__(self, n_c, n_z, n_filters=[64, 128, 256, 512, 1024, 2048]):
+    def __init__(self, n_c, n_z, n_filters=[64, 128, 256, 512, 1024]):
         print('Building discriminator...')
         super(D, self).__init__()
         layers = []
         n_in = n_c
         for n_f in n_filters:
             layers += [nn.Conv2d(n_in, n_f, kernel_size=4, padding=1, stride=2)]
+            layers += [nn.InstanceNorm2d(n_f)]
             layers += [nn.LeakyReLU(negative_slope=0.01, inplace=True)]
             n_in = n_f
         self.convs = nn.Sequential(*layers)
@@ -368,9 +369,10 @@ class D(nn.Module):
         self.conv_int = nn.Conv2d(n_in, 16, kernel_size=1, padding=0, stride=1)
         n_in_c = n_filters[-1] * 2 + n_z
         self.convs_cls = nn.Sequential(
-            nn.Conv2d(n_in_c, 2048, kernel_size=1, padding=0, stride=1),
+            nn.Conv2d(n_in_c, n_filters[-1], kernel_size=1, padding=0, stride=1),
+            nn.InstanceNorm2d(n_filters[-1]),
             nn.LeakyReLU(negative_slope=0.01, inplace=True),
-            nn.Conv2d(2048, 1, kernel_size=1, padding=0, stride=1),
+            nn.Conv2d(n_filters[-1], 1, kernel_size=1, padding=0, stride=1),
         )
 
     def forward(self, img_a, img_b=None, z=None, critic=False):

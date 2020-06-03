@@ -82,3 +82,8 @@ commit: 1b4b877
 
 ## Cat attribtue z to resblock and upsample layers
 commit: 56ba589
+
+
+
+## + Reduce D one layer and Instance Norm
+commit: 

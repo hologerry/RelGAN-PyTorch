@@ -84,7 +84,6 @@ args = parse()
 if args.config is not None:
     args = load_config(args.config)
 
-
 print('Training parameters:', args)
 data_path = args.data
 dataset = args.dataset
@@ -104,6 +103,10 @@ save_interval = args.save_interval
 if not os.path.exists(save_file):
     os.makedirs(save_file)
 
+with open(os.path.join('runs', exp_name, 'opts.txt'), 'w') as f:
+    for key, value in vars(args).items():
+        f.write(str(key) + ": " + str(value) + "\n")
+
 gpu = args.gpu = args.gpu or args.multi_gpu
 multi_gpu = args.multi_gpu
 
@@ -115,8 +118,6 @@ selected_attrs = [
 args.selected_attributes = yaml.load(open(args.attr, 'r', encoding='utf-8'))
 selected_attributes = args.selected_attributes
 assert type(selected_attributes) is list
-
-os.makedirs('model', exist_ok=True)
 
 
 interpolating_attributes = ['Smiling', 'Young', 'Mustache']
