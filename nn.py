@@ -319,15 +319,15 @@ class G(nn.Module):
             SwitchNorm2d(256, momentum=0.9),
             nn.ReLU(inplace=True),
         )
-        resb_layers = [ResidualBlock(256, 256, 3) for _ in range(n_repeat)]
+        resb_layers = [ResidualBlock(256+n_z, 256+n_z, 3) for _ in range(n_repeat)]
         self.resb = nn.Sequential(*resb_layers)
         self.up2 = nn.Sequential(
-            nn.ConvTranspose2d(256, 128, kernel_size=4, padding=1, stride=2),
+            nn.ConvTranspose2d(256+n_z, 128, kernel_size=4, padding=1, stride=2),
             SwitchNorm2d(128, momentum=0.9),
             nn.ReLU(inplace=True),
         )
         self.up1 = nn.Sequential(
-            nn.ConvTranspose2d(128, 64, kernel_size=4, padding=1, stride=2),
+            nn.ConvTranspose2d(128+n_z, 64, kernel_size=4, padding=1, stride=2),
             SwitchNorm2d(64, momentum=0.9),
             nn.ReLU(inplace=True),
         )
@@ -337,13 +337,17 @@ class G(nn.Module):
         )
 
     def forward(self, img, z):
-        tiled_z = tile_like(z, img)
-        x = torch.cat([img, tiled_z], dim=1)
+        tiled_down_z = tile_like(z, img)
+        x = torch.cat([img, tiled_down_z], dim=1)
         h = self.conv_in(x)
         h = self.down1(h)
         h = self.down2(h)
+        tiled_mid_z = tile_like(z, h)
+        h = torch.cat([h, tiled_mid_z], dim=1)
         h = self.resb(h)
         h = self.up2(h)
+        tiled_up_z = tile_like(z, h)
+        h = torch.cat([h, tiled_up_z], dim=1)
         h = self.up1(h)
         y = self.conv_out(h)
         return y

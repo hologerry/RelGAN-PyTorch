@@ -89,10 +89,10 @@ print('Training parameters:', args)
 data_path = args.data
 dataset = args.dataset
 load_file = args.load
-save_file = args.save
 n_steps = args.steps
 start_step = args.start_step
 exp_name = args.name
+save_file = os.path.join('runs', exp_name, args.save)
 batch_size = args.batch_size
 image_size = args.image_size
 n_iter_G = args.iterG
@@ -100,6 +100,9 @@ n_iter_D = args.iterD
 log_interval = args.log_interval
 sample_interval = args.sample_interval
 save_interval = args.save_interval
+
+if not os.path.exists(save_file):
+    os.path.makedirs(save_file)
 
 gpu = args.gpu = args.gpu or args.multi_gpu
 multi_gpu = args.multi_gpu
