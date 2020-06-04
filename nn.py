@@ -11,8 +11,10 @@ import torch
 import torch.autograd as autograd
 import torch.nn as nn
 import torch.optim as optim
-from switchable_norm import SwitchNorm2d
 from torchsummary import summary
+
+from switchable_norm import SwitchNorm2d
+from spade import SPADEResnetBlock
 
 
 def weights_init(m):
@@ -303,6 +305,7 @@ class G(nn.Module):
         print('Building generator...')
         super(G, self).__init__()
         self.n_z = n_z
+        self.n_repeat = n_repeat
 
         self.conv_in = nn.Sequential(
             nn.Conv2d(n_c + n_z, 64, kernel_size=7, padding=3, stride=1),
@@ -319,8 +322,9 @@ class G(nn.Module):
             SwitchNorm2d(256, momentum=0.9),
             nn.ReLU(inplace=True),
         )
-        resb_layers = [ResidualBlock(256+n_z, 256+n_z, 3) for _ in range(n_repeat)]
-        self.resb = nn.Sequential(*resb_layers)
+        # resb_layers = [ResidualBlock(256+n_z, 256+n_z, 3) for _ in range(n_repeat)]
+        # self.resb = nn.Sequential(*resb_layers)
+        self.resb_layers = nn.ModuleList([SPADEResnetBlock(256, 256, n_z) for _ in range(n_repeat)])
         self.up2 = nn.Sequential(
             nn.ConvTranspose2d(256+n_z, 128, kernel_size=4, padding=1, stride=2),
             SwitchNorm2d(128, momentum=0.9),
@@ -342,9 +346,12 @@ class G(nn.Module):
         h = self.conv_in(x)
         h = self.down1(h)
         h = self.down2(h)
-        tiled_mid_z = tile_like(z, h)
-        h = torch.cat([h, tiled_mid_z], dim=1)
-        h = self.resb(h)
+        # tiled_mid_z = tile_like(z, h)
+        # h = torch.cat([h, tiled_mid_z], dim=1)
+        # h = self.resb(h)
+        z_seg = z.reshape(z.size(0), z.size(1), 1, 1)
+        for i in range(self.n_repeat):
+            h = self.resb_layers[i](h, z_seg)
         h = self.up2(h)
         tiled_up_z = tile_like(z, h)
         h = torch.cat([h, tiled_up_z], dim=1)
@@ -354,14 +361,14 @@ class G(nn.Module):
 
 
 class D(nn.Module):
-    def __init__(self, n_c, n_z, n_filters=[64, 128, 256, 512, 1024]):
+    def __init__(self, n_c, n_z, n_filters=[64, 128, 256, 512, 1024, 2048]):
         print('Building discriminator...')
         super(D, self).__init__()
         layers = []
         n_in = n_c
         for n_f in n_filters:
             layers += [nn.Conv2d(n_in, n_f, kernel_size=4, padding=1, stride=2)]
-            layers += [nn.InstanceNorm2d(n_f)]
+            # layers += [nn.InstanceNorm2d(n_f)]
             layers += [nn.LeakyReLU(negative_slope=0.01, inplace=True)]
             n_in = n_f
         self.convs = nn.Sequential(*layers)
@@ -370,7 +377,7 @@ class D(nn.Module):
         n_in_c = n_filters[-1] * 2 + n_z
         self.convs_cls = nn.Sequential(
             nn.Conv2d(n_in_c, n_filters[-1], kernel_size=1, padding=0, stride=1),
-            nn.InstanceNorm2d(n_filters[-1]),
+            # nn.InstanceNorm2d(n_filters[-1]),
             nn.LeakyReLU(negative_slope=0.01, inplace=True),
             nn.Conv2d(n_filters[-1], 1, kernel_size=1, padding=0, stride=1),
         )
