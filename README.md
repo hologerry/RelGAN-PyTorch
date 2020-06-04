@@ -79,12 +79,20 @@ commit: 1b4b877
     b. 'Young' and 'Mustache', basicly not working
 
 
+Observation: the order of `('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),` seems to be ` ('Blond_Hair', 1), ('Black_Hair', 1),('Brown_Hair', 1),` same as the following modifications
+
 
 ## Cat attribtue z to resblock and upsample layers
 commit: 56ba589
-
+(iterations: 20000)
+1. Overall results are better than the original results
+2. Single attribute modification ability improved
+3. eyeglass still not working
+4. interpolation basicly same as original
 
 
 ## + Reduce D one layer and Instance Norm
 commit: 2af1e6c
-
+(iterations: 40000)
+Pros: boost training speed, 2x faster
+Cons: obvious checkerboard phenomenon
