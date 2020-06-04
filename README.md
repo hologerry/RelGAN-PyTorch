@@ -99,3 +99,4 @@ Cons: obvious checkerboard phenomenon
 
 
 ## C. A + SPADEResBlock
+commit: 

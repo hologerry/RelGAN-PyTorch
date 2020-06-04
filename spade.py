@@ -17,7 +17,7 @@ import torch.nn.utils.spectral_norm as spectral_norm
 # |norm_nc|: the #channels of the normalized activations, hence the output dim of SPADE
 # |label_nc|: the #channels of the input semantic map, hence the input dim of SPADE
 class SPADE(nn.Module):
-    def __init__(self, norm_nc, label_nc, kernel_size, param_free_norm_type='instance'):
+    def __init__(self, norm_nc, label_nc, kernel_size=3, param_free_norm_type='instance'):
         super().__init__()
 
         if param_free_norm_type == 'instance':
