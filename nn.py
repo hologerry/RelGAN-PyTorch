@@ -352,9 +352,11 @@ class G(nn.Module):
         z_seg = z.reshape(z.size(0), z.size(1), 1, 1)
         for i in range(self.n_repeat):
             h = self.resb_layers[i](h, z_seg)
+        tiled_up2_z = tile_like(z, h)
+        h = torch.cat([h, tiled_up2_z], dim=1)
         h = self.up2(h)
-        tiled_up_z = tile_like(z, h)
-        h = torch.cat([h, tiled_up_z], dim=1)
+        tiled_up1_z = tile_like(z, h)
+        h = torch.cat([h, tiled_up1_z], dim=1)
         h = self.up1(h)
         y = self.conv_out(h)
         return y
