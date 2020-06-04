@@ -86,4 +86,5 @@ commit: 56ba589
 
 
 ## + Reduce D one layer and Instance Norm
-commit: 
+commit: 2af1e6c
+
