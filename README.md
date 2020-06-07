@@ -48,8 +48,11 @@ CUDA_VISIBLE_DEVICES=0 python3 train.py --config config.yaml
 ## Original RelGAN
 commit: 1b4b877
 
+results path: `RelGAN_results/origin`
+
+
 ### Problems
-(iterations: 26000)
+(iterations: 40000)
 
 
 0. val_img_xxx: validation results
@@ -86,7 +89,10 @@ Observation: the order of `('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 
 
 ## A. Cat attribtue z to resblock and upsample layers
 commit: 56ba589    
-(iterations: 20000)     
+(iterations: 40000)     
+
+results path: `RelGAN_results/comparison/A_*`
+
 1. Overall results are better than the original results   
 2. Single attribute modification ability improved   
 3. eyeglass still not working    
@@ -96,10 +102,16 @@ commit: 56ba589
 ## B. A + Reduce D one layer and Instance Norm
 commit: 2af1e6c   
 (iterations: 40000)   
-Pros: boost training speed, 2x faster   
-Cons: obvious checkerboard phenomenon   
+
+results path: `RelGAN_results/comparison/B_*`
+
+boost training speed, 2x faster   
 
 
 ## C. A + SPADEResBlock
 commit: 25a62f0
+(iterations: 40000)
 
+results path: `RelGAN_results/comparison/C_*`
+
+1. no obvious improvement
