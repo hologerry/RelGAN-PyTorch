@@ -81,7 +81,7 @@ results path: `RelGAN_results/origin`
     ```
     problems revealed by results:
     a. 'Smiling', most images dont work, only a few ones work, some are mutations
-    b. 'Young' and 'Mustache', basicly not working
+    b. 'Young' and 'Mustache', basiclly not working
 
 
 Observation: the order of `('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 1),` seems to be ` ('Blond_Hair', 1), ('Black_Hair', 1),('Brown_Hair', 1),` same as the following modifications
