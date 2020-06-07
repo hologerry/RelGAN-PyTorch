@@ -50,6 +50,8 @@ commit: 1b4b877
 
 ### Problems
 (iterations: 26000)
+
+
 0. val_img_xxx: validation results
     revealed problems:
     a. reconstruction is good but not attribute transferring
@@ -83,20 +85,21 @@ Observation: the order of `('Black_Hair', 1), ('Blond_Hair', 1), ('Brown_Hair', 
 
 
 ## A. Cat attribtue z to resblock and upsample layers
-commit: 56ba589
-(iterations: 20000)
-1. Overall results are better than the original results
-2. Single attribute modification ability improved
-3. eyeglass still not working
-4. interpolation basicly same as original
+commit: 56ba589    
+(iterations: 20000)     
+1. Overall results are better than the original results   
+2. Single attribute modification ability improved   
+3. eyeglass still not working    
+4. interpolation basicly same as original   
 
 
 ## B. A + Reduce D one layer and Instance Norm
-commit: 2af1e6c
-(iterations: 40000)
-Pros: boost training speed, 2x faster
-Cons: obvious checkerboard phenomenon
+commit: 2af1e6c   
+(iterations: 40000)   
+Pros: boost training speed, 2x faster   
+Cons: obvious checkerboard phenomenon   
 
 
 ## C. A + SPADEResBlock
-commit: 
+commit: 25a62f0
+
