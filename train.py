@@ -84,14 +84,24 @@ args = parse()
 if args.config is not None:
     args = load_config(args.config)
 
+experiments_dir = os.path.join('../experiments')
+
+if not os.path.exists(experiments_dir):
+    os.makedirs(experiments_dir)
+
 print('Training parameters:', args)
 data_path = args.data
 dataset = args.dataset
 load_file = args.load
 n_steps = args.steps
 start_step = args.start_step
-exp_name = args.name
-save_file = os.path.join('runs', exp_name, args.save)
+
+exp_name = 'RelGAN_PyTorch_' + args.name
+save_file = os.path.join(experiments_dir, exp_name, args.save)
+
+if not os.path.exists(save_file):
+    os.makedirs(save_file)
+
 batch_size = args.batch_size
 image_size = args.image_size
 n_iter_G = args.iterG
@@ -100,10 +110,8 @@ log_interval = args.log_interval
 sample_interval = args.sample_interval
 save_interval = args.save_interval
 
-if not os.path.exists(save_file):
-    os.makedirs(save_file)
 
-with open(os.path.join('runs', exp_name, 'opts.txt'), 'w') as f:
+with open(os.path.join(experiments_dir, exp_name, 'opts.txt'), 'w') as f:
     for key, value in vars(args).items():
         f.write(str(key) + ": " + str(value) + "\n")
 
